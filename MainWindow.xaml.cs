@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
+using System.Xml.Schema;
 
 namespace calculator_wpf
 {
@@ -25,146 +26,151 @@ namespace calculator_wpf
         }
 
         #region Calculation Function
-        int Multiplication(int num1, int num2)
+        double Multiplication(double num1, double num2)
         {
-            int result = num1 * num2;
-            return result;
+            double result = num1 * num2;
+            double rounded_result = Math.Round(result, 2);
+            return rounded_result;
         }
 
-        int Division(int num1, int num2)
+        double Division(double num1, double num2)
         {
-            int result = 0;
-            try
+            double result = num1 / num2;
+
+            if (Double.IsInfinity(result))
             {
-                 result = num1 / num2;
+                Error_Message("Division Error");
+                return 0;
             }
-            catch 
+            else
             {
-                textblock_value.Text = "ERROR";
-                MessageBox.Show("Division by 0 is not allowed");
+                double rounded_result = Math.Round(result, 2);
+                return rounded_result;
             }
-            return result;
-        }
-          
-        int Addition(int num1, int num2)
-        {
-            int result = num1 + num2;
-            return result;
         }
 
-        int Subtraction(int num1, int num2)
+        double Addition(double num1, double num2)
         {
-            int result = num1 - num2;
-            return result;
+            double result = num1 + num2;
+            double rounded_result = Math.Round(result, 2);
+            return rounded_result;
+        }
+
+        double Subtraction(double num1, double num2)
+        {
+            double result = num1 - num2;
+            double rounded_result = Math.Round(result, 2);
+            return rounded_result;
         }
         #endregion
 
 
         #region Calculator Buttons
-        private void sevenButton_Click(object sender, RoutedEventArgs e)
+        private void SevenButton_Click(object sender, RoutedEventArgs e)
         {
             textblock_value.Text += "7";
 
         }
 
-        private void eightButton_Click(object sender, RoutedEventArgs e)
+        private void EightButton_Click(object sender, RoutedEventArgs e)
         {
             textblock_value.Text += "8";
         }
 
-        private void nineButton_Click(object sender, RoutedEventArgs e)
+        private void NineButton_Click(object sender, RoutedEventArgs e)
         {
             textblock_value.Text += "9";
         }
 
-        private void multiplicationButton_Click(object sender, RoutedEventArgs e)
+        private void MultiplicationButton_Click(object sender, RoutedEventArgs e)
         {
             textblock_value.Text += " * ";
         }
 
-        private void fourButton_Click(object sender, RoutedEventArgs e)
+        private void FourButton_Click(object sender, RoutedEventArgs e)
         {
             textblock_value.Text += "4";
         }
 
-        private void fiveButton_Click(object sender, RoutedEventArgs e)
+        private void FiveButton_Click(object sender, RoutedEventArgs e)
         {
             textblock_value.Text += "5";
         }
 
-        private void sixButton_Click(object sender, RoutedEventArgs e)
+        private void SixButton_Click(object sender, RoutedEventArgs e)
         {
             textblock_value.Text += "6";
         }
 
-        private void subtractionButton_Click(object sender, RoutedEventArgs e)
+        private void SubtractionButton_Click(object sender, RoutedEventArgs e)
         {
             textblock_value.Text += " - ";
         }
 
-        private void oneButton_Click(object sender, RoutedEventArgs e)
+        private void OneButton_Click(object sender, RoutedEventArgs e)
         {
             textblock_value.Text += "1";
         }
 
-        private void twoButton_Click(object sender, RoutedEventArgs e)
+        private void TwoButton_Click(object sender, RoutedEventArgs e)
         {
             textblock_value.Text += "2";
         }
 
-        private void threeButton_Click(object sender, RoutedEventArgs e)
+        private void ThreeButton_Click(object sender, RoutedEventArgs e)
         {
             textblock_value.Text += "3";
         }
 
-        private void additionButton_Click(object sender, RoutedEventArgs e)
+        private void AdditionButton_Click(object sender, RoutedEventArgs e)
         {
             textblock_value.Text += " + ";
         }
 
-        private void divisionButton_Click(object sender, RoutedEventArgs e)
+        private void DivisionButton_Click(object sender, RoutedEventArgs e)
         {
             textblock_value.Text += " / ";
         }
 
-        private void zeroButton_Click(object sender, RoutedEventArgs e)
+        private void ZeroButton_Click(object sender, RoutedEventArgs e)
         {
             textblock_value.Text += "0";
         }
 
-        private void decimalButton_Click(object sender, RoutedEventArgs e)
+        private void DecimalButton_Click(object sender, RoutedEventArgs e)
         {
-            textblock_value.Text += ".";
+            textblock_value.Text += ",";
         }
 
-        private void equalButton_Click(object sender, RoutedEventArgs e)
+        private void EqualButton_Click(object sender, RoutedEventArgs e)
         {
             string exercise = textblock_value.Text;
-            list_sorting(exercise);
+            List_Sorting(exercise);
         }
-        private void clearButton_Click(object sender, RoutedEventArgs e)
+        private void ClearButton_Click(object sender, RoutedEventArgs e)
         {
+            textblock_value.Foreground = Brushes.White;
+            textblock_result.Foreground = Brushes.White;
             textblock_result.Text = String.Empty;
             textblock_value.Text = String.Empty;
         }
 
-        private void minusButton_Click(object sender, RoutedEventArgs e)
+        private void MinusButton_Click(object sender, RoutedEventArgs e)
         {
 
         }
 
-        private void percentageButton_Click(object sender, RoutedEventArgs e)
+        private void PercentageButton_Click(object sender, RoutedEventArgs e)
         {
 
         }
         #endregion
 
-        void list_sorting(string exercise)
-
+        void List_Sorting(string exercise)
         {
             List<string> double_tokens = new List<string>();
             List<string> operator_tokens = new List<string>();
-            string[] tokens = exercise.Split(' ');
+            string[] tokens = exercise.Split(' ');            
 
             foreach (string token in tokens)
             {
@@ -178,36 +184,36 @@ namespace calculator_wpf
                 }
             }
 
-            checking_if_operator_included(operator_tokens, double_tokens);
+            Checking_Which_Operator_Included(operator_tokens, double_tokens);
         }
-        void checking_if_operator_included(List<string> operator_tokens, List<string> double_tokens)
+        void Checking_Which_Operator_Included(List<string> operator_tokens, List<string> double_tokens)
         {
             while (operator_tokens.Count > 0)
             {
 
                 if (operator_tokens.Contains("*"))
                 {
-                    analysing_list_element_position(operator_tokens, double_tokens, "*");
+                    Analysing_List_Element_Position(operator_tokens, double_tokens, "*");
 
                 }
                 if (operator_tokens.Contains("/"))
                 {
-                    analysing_list_element_position(operator_tokens, double_tokens, "/");
+                    Analysing_List_Element_Position(operator_tokens, double_tokens, "/");
 
                 }
                 if (operator_tokens.Contains("+"))
                 {
-                    analysing_list_element_position(operator_tokens, double_tokens, "+");
+                    Analysing_List_Element_Position(operator_tokens, double_tokens, "+");
 
                 }
                 if (operator_tokens.Contains("-"))
                 {
-                    analysing_list_element_position(operator_tokens, double_tokens, "-");
+                    Analysing_List_Element_Position(operator_tokens, double_tokens, "-");
                 }
             }
         }
 
-        void analysing_list_element_position(List<string> operator_tokens, List<string> double_tokens, string operation)
+        void Analysing_List_Element_Position(List<string> operator_tokens, List<string> double_tokens, string operation)
         {
             int index = operator_tokens.FindIndex(token => token == operation);
             string left_of_op = double_tokens.ElementAt(index);
@@ -216,22 +222,31 @@ namespace calculator_wpf
             operator_tokens.RemoveAt(index);
             double_tokens.RemoveAt(index + 1);
             double_tokens.RemoveAt(index);
-            displaying_result(double_tokens, operation, index, left_of_op, right_of_op);
+            Displaying_Result(double_tokens, operation, index, left_of_op, right_of_op);
         }
 
-        void displaying_result(List<string> double_tokens, string operation, int index, string left_of_op, string right_of_op)
+        void Displaying_Result(List<string> double_tokens, string operation, int index, string left_of_op, string right_of_op)
         {
-            int result = calculation(left_of_op, right_of_op, operation);
+            double result = Calculation(left_of_op, right_of_op, operation);
 
             double_tokens.Insert(index, result.ToString());
             textblock_result.Text = result.ToString();
         }
 
-        int calculation(string left_of_op, string right_of_op, string operation)
+        double Calculation(string left_of_op, string right_of_op, string operation)
         {
-            int left_num = Int32.Parse(left_of_op);
-            int right_num = Int32.Parse(right_of_op);
-            int result = 0;
+            double left_num = 0;
+            double right_num = 0;
+            double result = 0;
+            try
+            {
+                 left_num = Convert.ToDouble(left_of_op);
+                 right_num = Convert.ToDouble(right_of_op);
+            }
+            catch (Exception ex)
+            {
+                Error_Message("Input Error");
+            }
 
             switch (operation)
             {
@@ -258,6 +273,13 @@ namespace calculator_wpf
             }
         }
 
+        double Error_Message(string message)
+        {
+            textblock_value.Foreground = Brushes.IndianRed;
+            textblock_result.Foreground = Brushes.IndianRed;
+            textblock_value.Text = message;
+            return 0;
+        }
     }
 }
     
